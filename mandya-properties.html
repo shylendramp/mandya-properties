@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Mandya Properties" />
+  <title>Mandya Properties | ಮಂಡ್ಯ ಪ್ರಾಪರ್ಟೀಸ್</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans + Noto Sans Kannada -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Noto Sans Kannada"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              950: '#0a0f1d',
+              900: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+              accent: '#d97706',
+              accentHover: '#b45309',
+              emerald: '#059669',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Kannada', system-ui, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .glass-nav {
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .card-hover {
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-slide-up { animation: slideUp 0.28s ease-out forwards; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-white">
+
+  <!-- PWA Install Banner (Dismissible) -->
+  <div id="pwa-install-banner" class="bg-gradient-to-r from-amber-600 via-amber-500 to-orange-500 text-white px-4 py-2.5 text-sm shadow-md relative z-50">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+        </span>
+        <span id="pwa-banner-text" class="font-medium leading-snug">Install Mandya Properties on your mobile home screen for instant property alerts.</span>
+      </div>
+      <div class="flex items-center gap-2 ml-auto">
+        <button id="pwa-install-btn" onclick="triggerPwaInstall()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3.5 py-1.5 rounded-lg text-xs transition shadow-sm cursor-pointer">
+          Install App
+        </button>
+        <button onclick="openInstallGuide()" id="pwa-guide-link" class="bg-white/20 hover:bg-white/30 text-white font-medium px-2.5 py-1.5 rounded-lg text-xs transition cursor-pointer">
+          Mobile Guide
+        </button>
+        <button onclick="dismissInstallBanner()" aria-label="Dismiss" class="p-1 rounded-lg hover:bg-white/20 transition cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <header class="glass-nav text-white sticky top-0 z-40 border-b border-slate-800/80 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-18 gap-2">
+        <!-- Brand Logo -->
+        <button onclick="switchView('listings')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/20 group-hover:scale-105 transition">
+            <svg class="w-6 h-6 text-slate-950" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 12v.01M9 15v.01M9 18v.01" />
+            </svg>
+          </div>
+          <div>
+            <div id="brand-name" class="font-extrabold text-base sm:text-lg tracking-tight leading-none text-white">Mandya Properties</div>
+            <div id="brand-sub" class="text-[11px] font-medium text-amber-400 tracking-wider uppercase mt-0.5">Verified Estates</div>
+          </div>
+        </button>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-1.5">
+          <button onclick="switchView('listings')" id="nav-listings" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold transition cursor-pointer bg-white/10 text-white">
+            Browse Properties
+          </button>
+          <button onclick="switchView('post')" id="nav-post" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold transition cursor-pointer text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span id="nav-post-label">Post Property</span>
+          </button>
+          <button onclick="switchView('admin')" id="nav-admin" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold transition cursor-pointer text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span id="nav-admin-label">Admin Portal</span>
+            <span id="pending-badge" class="hidden bg-amber-500 text-slate-950 text-xs font-extrabold px-2 py-0.5 rounded-full">0</span>
+          </button>
+        </nav>
+
+        <!-- Language Switcher + Mobile Actions -->
+        <div class="flex items-center gap-2">
+          <!-- Bilingual Toggle EN | ಕನ್ನಡ -->
+          <div class="inline-flex items-center bg-slate-800/90 border border-slate-700 rounded-xl p-1 shadow-inner" role="group" aria-label="Language Switcher">
+            <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer bg-amber-500 text-slate-950 shadow-sm">
+              EN
+            </button>
+            <button id="lang-btn-kn" onclick="setLanguage('kn')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer text-slate-300 hover:text-white">
+              ಕನ್ನಡ
+            </button>
+          </div>
+
+          <button onclick="openInstallGuide()" title="Install Mobile App" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 transition cursor-pointer hidden sm:inline-flex">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Bottom-Style Tab Bar inside Header for Easy Thumb Access -->
+    <div class="md:hidden grid grid-cols-3 border-t border-slate-800 bg-slate-900/95 text-xs font-semibold">
+      <button onclick="switchView('listings')" id="m-nav-listings" class="py-2.5 flex flex-col items-center justify-center gap-1 text-amber-400 border-b-2 border-amber-400 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span id="m-nav-listings-label">Listings</span>
+      </button>
+      <button onclick="switchView('post')" id="m-nav-post" class="py-2.5 flex flex-col items-center justify-center gap-1 text-slate-400 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span id="m-nav-post-label">Post Property</span>
+      </button>
+      <button onclick="switchView('admin')" id="m-nav-admin" class="py-2.5 flex flex-col items-center justify-center gap-1 text-slate-400 relative cursor-pointer">
+        <div class="relative">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <span id="m-pending-dot" class="hidden absolute -top-1 -right-2 w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+        </div>
+        <span id="m-nav-admin-label">Admin</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1">
+
+    <!-- ==================== VIEW 1: PUBLIC PROPERTY LISTINGS ==================== -->
+    <section id="view-listings" class="animate-slide-up">
+      <!-- Hero Banner -->
+      <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 24px 24px;"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 relative">
+          <div class="max-w-3xl">
+            <span id="hero-badge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-semibold mb-4">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Admin-Verified Real Estate Marketplace
+            </span>
+            <h1 id="hero-title" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+              Find Your Next <span class="text-amber-400">Residential, Commercial</span> or <span class="text-emerald-400">Agricultural</span> Property
+            </h1>
+            <p id="hero-subtitle" class="mt-3.5 text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+              Explore admin-vetted properties available for Sale, Rent, and Long-Term Lease across Karnataka. Have a property? Submit your listing for quick verification.
+            </p>
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <button onclick="switchView('post')" id="hero-cta-post" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-5 py-3 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center gap-2 cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Post Your Property</span>
+              </button>
+              <button onclick="document.getElementById('listings-grid-anchor').scrollIntoView({behavior:'smooth'})" id="hero-cta-explore" class="bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold px-5 py-3 rounded-xl transition cursor-pointer">
+                Explore Listings
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Live Stats -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-8 border-t border-slate-800/90">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
+              <div id="stat-total-active" class="text-2xl font-extrabold text-white">0</div>
+              <div id="stat-total-label" class="text-xs text-slate-400 mt-0.5 font-medium">Verified Listings</div>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
+              <div id="stat-res-count" class="text-2xl font-extrabold text-amber-400">0</div>
+              <div id="stat-res-label" class="text-xs text-slate-400 mt-0.5 font-medium">Residential</div>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
+              <div id="stat-com-count" class="text-2xl font-extrabold text-sky-400">0</div>
+              <div id="stat-com-label" class="text-xs text-slate-400 mt-0.5 font-medium">Commercial</div>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
+              <div id="stat-agr-count" class="text-2xl font-extrabold text-emerald-400">0</div>
+              <div id="stat-agr-label" class="text-xs text-slate-400 mt-0.5 font-medium">Agricultural</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search & Filter Bar -->
+      <div id="listings-grid-anchor" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-4 sm:p-5">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+            <!-- Keyword Search -->
+            <div class="md:col-span-4 relative">
+              <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input type="text" id="filter-search" oninput="renderListings()" placeholder="Search city, locality, title..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm transition" />
+            </div>
+
+            <!-- Transaction Type Filter -->
+            <div class="md:col-span-3">
+              <select id="filter-transaction" onchange="renderListings()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-amber-500 outline-none text-sm font-medium text-slate-700 cursor-pointer">
+                <option value="all" id="opt-trans-all">All Listing Types (Sale/Rent/Lease)</option>
+                <option value="Sale" id="opt-trans-sale">For Sale</option>
+                <option value="Rent" id="opt-trans-rent">For Rent</option>
+                <option value="Lease" id="opt-trans-lease">For Lease</option>
+              </select>
+            </div>
+
+            <!-- Property Category Filter -->
+            <div class="md:col-span-3">
+              <select id="filter-category" onchange="renderListings()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-amber-500 outline-none text-sm font-medium text-slate-700 cursor-pointer">
+                <option value="all" id="opt-cat-all">All Categories</option>
+                <option value="Residential" id="opt-cat-res">Residential</option>
+                <option value="Commercial" id="opt-cat-com">Commercial</option>
+                <option value="Agricultural" id="opt-cat-agr">Agricultural</option>
+              </select>
+            </div>
+
+            <!-- Availability Filter -->
+            <div class="md:col-span-2">
+              <select id="filter-availability" onchange="renderListings()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-amber-500 outline-none text-sm font-medium text-slate-700 cursor-pointer">
+                <option value="all" id="opt-avail-all">All Statuses</option>
+                <option value="Available" id="opt-avail-yes">Available Only</option>
+                <option value="Unavailable" id="opt-avail-no">Sold / Rented / Leased</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Quick Category Pills -->
+          <div class="flex flex-wrap items-center justify-between gap-2 mt-3.5 pt-3.5 border-t border-slate-100">
+            <div class="flex flex-wrap items-center gap-1.5" id="quick-pills">
+              <button onclick="setQuickCategory('all')" data-cat="all" class="quick-pill px-3 py-1 rounded-full text-xs font-semibold bg-slate-900 text-white transition cursor-pointer">All</button>
+              <button onclick="setQuickCategory('Residential')" data-cat="Residential" class="quick-pill px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer">Residential</button>
+              <button onclick="setQuickCategory('Commercial')" data-cat="Commercial" class="quick-pill px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer">Commercial</button>
+              <button onclick="setQuickCategory('Agricultural')" data-cat="Agricultural" class="quick-pill px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer">Agricultural</button>
+            </div>
+            <div class="flex items-center gap-3 text-xs text-slate-500">
+              <span id="results-count-label">Showing 0 properties</span>
+              <button onclick="resetFilters()" id="reset-filters-btn" class="text-amber-600 hover:text-amber-700 font-semibold underline cursor-pointer">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Properties Grid -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+        <div id="properties-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Cards rendered dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-listings-state" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200/80 shadow-sm">
+          <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h3 id="empty-title" class="text-lg font-bold text-slate-900">No Matching Properties Found</h3>
+          <p id="empty-subtitle" class="text-sm text-slate-500 mt-1 max-w-md mx-auto">Try clearing your search filters or check back after our admin team approves new submissions.</p>
+          <button onclick="resetFilters()" id="empty-reset-btn" class="mt-4 px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition cursor-pointer">Clear Filters</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: USER POST PROPERTY ==================== -->
+    <section id="view-post" class="hidden animate-slide-up max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div class="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden">
+        <!-- Form Header -->
+        <div class="bg-slate-900 text-white px-6 sm:px-8 py-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span id="post-badge" class="inline-block text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">Owner &amp; Broker Submission</span>
+            <h2 id="post-heading" class="text-2xl font-extrabold">List Your Property for Review</h2>
+            <p id="post-subheading" class="text-sm text-slate-300 mt-1">All submitted listings are verified by our Admin team before appearing publicly.</p>
+          </div>
+          <button type="button" onclick="autoFillDemoProperty()" id="autofill-btn" class="bg-white/10 hover:bg-white/20 border border-white/15 text-amber-300 text-xs font-semibold px-3.5 py-2 rounded-xl transition cursor-pointer">
+            ✨ Auto-Fill Demo Data
+          </button>
+        </div>
+
+        <!-- Submission Form -->
+        <form id="property-submit-form" onsubmit="handlePropertySubmit(event)" class="p-6 sm:p-8 space-y-6">
+          <!-- Row 1: Transaction & Category -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label id="lbl-transaction" class="block text-sm font-bold text-slate-700 mb-1.5">Listing Type *</label>
+              <select id="inp-transaction" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm font-medium bg-white">
+                <option value="Sale" id="form-opt-sale">For Sale (ಮಾರಾಟಕ್ಕೆ)</option>
+                <option value="Rent" id="form-opt-rent">For Rent (ಬಾಡಿಗೆಗೆ)</option>
+                <option value="Lease" id="form-opt-lease">For Lease (ಲೀಸ್‌ಗೆ)</option>
+              </select>
+            </div>
+            <div>
+              <label id="lbl-category" class="block text-sm font-bold text-slate-700 mb-1.5">Property Category *</label>
+              <select id="inp-category" onchange="updateCategoryHint()" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm font-medium bg-white">
+                <option value="Residential" id="form-opt-res">Residential (ವಸತಿ)</option>
+                <option value="Commercial" id="form-opt-com">Commercial (ವಾಣಿಜ್ಯ)</option>
+                <option value="Agricultural" id="form-opt-agr">Agricultural (ಕೃಷಿ ಭೂಮಿ)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 2: Title (English & Optional Kannada) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label id="lbl-title-en" class="block text-sm font-bold text-slate-700 mb-1.5">Property Title (English) *</label>
+              <input type="text" id="inp-title-en" required placeholder="e.g., 3 BHK Luxury Villa in Mysuru" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm" />
+            </div>
+            <div>
+              <label id="lbl-title-kn" class="block text-sm font-bold text-slate-700 mb-1.5">Property Title (ಕನ್ನಡ - Optional)</label>
+              <input type="text" id="inp-title-kn" placeholder="ಉದಾ: ಮೈಸೂರಿನಲ್ಲಿ 3 BHK ಐಷಾರಾಮಿ ವಿಲ್ಲಾ" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm" />
+            </div>
+          </div>
+
+          <!-- Row 3: Location & Price -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label id="lbl-location" class="block text-sm font-bold text-slate-700 mb-1.5">City / Locality / Village *</label>
+              <input type="text" id="inp-location" required placeholder="e.g., Maddur Road, Mandya / Indiranagar, Bengaluru" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm" />
+            </div>
+            <div>
+              <label id="lbl-price" class="block text-sm font-bold text-slate-700 mb-1.5">Expected Price / Rent (₹ INR) *</label>
+              <input type="number" id="inp-price" required min="500" placeholder="e.g., 8500000" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm" />
+            </div>
+          </div>
+
+          <!-- Row 4: Area & Key Specs -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label id="lbl-area" class="block text-sm font-bold text-slate-700 mb-1.5">Total Area / Land Size *</label>
+              <input type="text" id="inp-area" required placeholder="e.g., 2,400 Sq.Ft / 4.5 Acres" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm" />
+              <p id="category-hint-text" class="text-xs text-slate-500 mt-1">Specify Sq.Ft or Sq.Yards for residential plots/homes.</p>
+            </div>
+            <div>
+              <label id="lbl-specs" class="block text-sm font-bold text-slate-700 mb-1.5">Key Highlights / Specs *</label>
+              <input type="text" id="inp-specs" required placeholder="e.g., 3 Beds • 3 Baths • East Facing • Covered Parking" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm" />
+            </div>
+          </div>
+
+          <!-- Row 5: Image URL -->
+          <div>
+            <label id="lbl-image" class="block text-sm font-bold text-slate-700 mb-1.5">Property Photo URL (Optional)</label>
+            <input type="url" id="inp-image" placeholder="https://images.unsplash.com/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm" />
+            <p id="lbl-image-hint" class="text-xs text-slate-500 mt-1">Leave blank to automatically assign a verified category cover photo.</p>
+          </div>
+
+          <!-- Row 6: Description -->
+          <div>
+            <label id="lbl-desc" class="block text-sm font-bold text-slate-700 mb-1.5">Detailed Description *</label>
+            <textarea id="inp-desc" rows="3" required placeholder="Describe road access, water source, legal clearance (Khata/RTC), nearby landmarks..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm"></textarea>
+          </div>
+
+          <!-- Row 7: Owner Details -->
+          <div class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-4">
+            <h3 id="lbl-owner-section" class="text-sm font-extrabold text-slate-800 uppercase tracking-wide">Owner / Contact Information</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label id="lbl-owner-name" class="block text-xs font-bold text-slate-600 mb-1">Full Name *</label>
+                <input type="text" id="inp-owner-name" required placeholder="e.g., Rajesh Gowda" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white focus:border-amber-500 outline-none text-sm" />
+              </div>
+              <div>
+                <label id="lbl-owner-phone" class="block text-xs font-bold text-slate-600 mb-1">Phone / WhatsApp Number *</label>
+                <input type="tel" id="inp-owner-phone" required placeholder="+91 98450 12345" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white focus:border-amber-500 outline-none text-sm" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+            <p id="submit-disclaimer" class="text-xs text-slate-500">Status after submission: <strong class="text-amber-600">Pending Admin Approval</strong></p>
+            <button type="submit" id="submit-prop-btn" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold px-7 py-3 rounded-xl shadow-lg shadow-amber-500/20 transition cursor-pointer">
+              Submit for Admin Review
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: ADMIN LOGIN & DASHBOARD ==================== -->
+    <section id="view-admin" class="hidden animate-slide-up max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
+      <!-- Admin Login Card (Shown when logged out) -->
+      <div id="admin-login-box" class="max-w-md mx-auto bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden">
+        <div class="bg-slate-900 text-white p-6 sm:p-8 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-amber-400 flex items-center justify-center mx-auto mb-3">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h2 id="login-title" class="text-2xl font-extrabold">Admin Moderation Portal</h2>
+          <p id="login-subtitle" class="text-xs text-slate-300 mt-1">Sign in to approve, reject, update availability, or remove listings.</p>
+        </div>
+
+        <form onsubmit="handleAdminLogin(event)" class="p-6 sm:p-8 space-y-4">
+          <div>
+            <label id="lbl-admin-email" class="block text-xs font-bold text-slate-700 uppercase mb-1">Admin Email</label>
+            <input type="email" id="admin-email" required placeholder="admin@mandyaproperties.com" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 outline-none text-sm" />
+          </div>
+          <div>
+            <label id="lbl-admin-pass" class="block text-xs font-bold text-slate-700 uppercase mb-1">Password</label>
+            <input type="password" id="admin-password" required placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-amber-500 outline-none text-sm" />
+          </div>
+          <div id="login-error" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 px-3 py-2 rounded-lg">
+            Invalid credentials. Use the Quick Fill button below.
+          </div>
+          <button type="submit" id="login-submit-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition shadow-md cursor-pointer">
+            Sign In to Dashboard
+          </button>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>Demo: <code class="text-slate-700 font-semibold">admin@mandyaproperties.com</code> / <code class="text-slate-700 font-semibold">admin123</code></span>
+            <button type="button" onclick="quickFillAdmin()" id="quick-fill-admin-btn" class="text-amber-600 hover:text-amber-700 font-bold underline cursor-pointer">
+              Quick Fill
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Admin Dashboard (Shown when logged in) -->
+      <div id="admin-dashboard-box" class="hidden space-y-6">
+        <!-- Dashboard Header -->
+        <div class="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-lg flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span id="admin-session-badge">Authenticated Admin Session</span>
+            </span>
+            <h2 id="dash-title" class="text-2xl sm:text-3xl font-extrabold mt-1">Property Moderation &amp; Inventory Control</h2>
+            <p id="dash-subtitle" class="text-sm text-slate-300 mt-1">Review user submissions, toggle availability (Sold/Rented/Leased), or delete outdated listings.</p>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <button onclick="resetDemoDatabase()" id="reset-demo-btn" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-200 text-xs font-semibold transition cursor-pointer">
+              Restore Sample Data
+            </button>
+            <button onclick="handleAdminLogout()" id="logout-btn" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow cursor-pointer">
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin KPI Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm">
+            <div id="kpi-pending" class="text-3xl font-extrabold text-amber-600">0</div>
+            <div id="kpi-pending-lbl" class="text-xs font-bold text-slate-500 uppercase mt-1">Pending Review</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm">
+            <div id="kpi-approved" class="text-3xl font-extrabold text-emerald-600">0</div>
+            <div id="kpi-approved-lbl" class="text-xs font-bold text-slate-500 uppercase mt-1">Published Live</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div id="kpi-closed" class="text-3xl font-extrabold text-slate-700">0</div>
+            <div id="kpi-closed-lbl" class="text-xs font-bold text-slate-500 uppercase mt-1">Sold / Rented / Leased</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-rose-200 shadow-sm">
+            <div id="kpi-rejected" class="text-3xl font-extrabold text-rose-600">0</div>
+            <div id="kpi-rejected-lbl" class="text-xs font-bold text-slate-500 uppercase mt-1">Rejected</div>
+          </div>
+        </div>
+
+        <!-- Admin Moderation Tabs -->
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <div class="border-b border-slate-200 px-5 pt-4 flex flex-wrap items-center gap-2 bg-slate-50/70">
+            <button onclick="setAdminTab('pending')" id="admin-tab-pending" class="admin-tab-btn px-4 py-2.5 rounded-t-xl text-sm font-bold border-b-2 border-amber-500 text-amber-700 bg-white cursor-pointer">
+              Pending Approval (<span id="tab-count-pending">0</span>)
+            </button>
+            <button onclick="setAdminTab('approved')" id="admin-tab-approved" class="admin-tab-btn px-4 py-2.5 rounded-t-xl text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 cursor-pointer">
+              Published Listings (<span id="tab-count-approved">0</span>)
+            </button>
+            <button onclick="setAdminTab('rejected')" id="admin-tab-rejected" class="admin-tab-btn px-4 py-2.5 rounded-t-xl text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 cursor-pointer">
+              Rejected (<span id="tab-count-rejected">0</span>)
+            </button>
+          </div>
+
+          <div id="admin-list-container" class="p-5 sm:p-6 space-y-4">
+            <!-- Admin moderation rows rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-950 text-slate-400 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-2.5">
+        <span class="font-bold text-white text-sm">Mandya Properties</span>
+        <span>•</span>
+        <span id="footer-tagline">Residential, Commercial &amp; Agricultural Estates</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="setLanguage('en')" class="hover:text-white transition cursor-pointer">English</button>
+        <span>|</span>
+        <button onclick="setLanguage('kn')" class="hover:text-white transition cursor-pointer">ಕನ್ನಡ</button>
+        <span>•</span>
+        <button onclick="openInstallGuide()" id="footer-install-link" class="text-amber-400 hover:text-amber-300 font-semibold transition cursor-pointer">Install Mobile App</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== PROPERTY DETAILS & INQUIRY MODAL ==================== -->
+  <div id="property-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-slate-200 my-auto animate-slide-up">
+      <div class="relative h-60 sm:h-72 bg-slate-900">
+        <img id="modal-img" src="" alt="Property" class="w-full h-full object-cover" />
+        <button onclick="closePropertyModal()" aria-label="Close" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white flex items-center justify-center transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div id="modal-badges" class="absolute bottom-4 left-4 flex flex-wrap gap-2"></div>
+      </div>
+
+      <div class="p-6 sm:p-7 space-y-5">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 id="modal-title" class="text-xl sm:text-2xl font-extrabold text-slate-900"></h3>
+            <p id="modal-location" class="text-sm text-slate-500 flex items-center gap-1.5 mt-1"></p>
+          </div>
+          <div class="text-left sm:text-right">
+            <div id="modal-price" class="text-2xl font-extrabold text-amber-600"></div>
+            <div id="modal-area" class="text-xs font-bold text-slate-500 mt-0.5"></div>
+          </div>
+        </div>
+
+        <div id="modal-specs" class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-sm font-semibold text-slate-700"></div>
+
+        <div>
+          <h4 id="modal-desc-heading" class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Property Overview</h4>
+          <p id="modal-desc" class="text-sm text-slate-600 leading-relaxed"></p>
+        </div>
+
+        <!-- Owner & Site Visit Box -->
+        <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div id="modal-owner-lbl" class="text-[11px] uppercase tracking-wider text-amber-400 font-bold">Verified Listing Contact</div>
+            <div id="modal-owner-name" class="font-bold text-base mt-0.5"></div>
+            <div id="modal-owner-phone" class="text-xs text-slate-300 mt-0.5"></div>
+          </div>
+          <button onclick="bookSiteVisit()" id="modal-visit-btn" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold px-4 py-2.5 rounded-xl text-xs transition shadow cursor-pointer">
+            Request Site Visit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MOBILE PWA INSTALL GUIDE MODAL ==================== -->
+  <div id="install-guide-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-200 animate-slide-up">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="guide-title" class="text-lg font-extrabold text-slate-900">Install App on Your Mobile</h3>
+        <button onclick="closeInstallGuide()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <p id="guide-intro" class="text-xs text-slate-600 leading-relaxed mb-4">
+        Add Mandya Properties to your home screen for full-screen mobile access, offline browsing, and quick property posting.
+      </p>
+      <div class="space-y-3 text-xs">
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+          <div id="guide-android-title" class="font-extrabold text-slate-900 mb-1">Android (Chrome / Edge)</div>
+          <p id="guide-android-steps" class="text-slate-600">Tap the <strong>⋮ Menu</strong> icon in the top-right corner of Chrome and select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</p>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+          <div id="guide-ios-title" class="font-extrabold text-slate-900 mb-1">iPhone / iPad (Safari)</div>
+          <p id="guide-ios-steps" class="text-slate-600">Tap the <strong>Share</strong> icon at the bottom of Safari, scroll down, and tap <strong>"Add to Home Screen"</strong>.</p>
+        </div>
+      </div>
+      <div class="mt-5 flex justify-end gap-2">
+        <button onclick="triggerPwaInstall()" id="guide-install-now" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer">
+          Install Prompt
+        </button>
+        <button onclick="closeInstallGuide()" id="guide-close-btn" class="bg-slate-900 text-white font-semibold px-4 py-2 rounded-xl text-xs cursor-pointer">
+          Got It
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-box" class="hidden fixed bottom-5 right-5 z-50 max-w-sm bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-slate-700 text-sm font-medium flex items-center gap-3 animate-slide-up">
+    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
+    <span id="toast-message"></span>
+  </div>
+
+  <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+  <script>
+    // 1. DYNAMIC PWA MANIFEST & SERVICE WORKER SETUP
+    (function initPWA() {
+      const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0f172a"/><path d="M112 400h288M144 400V176l112-64v288M368 400V240l-112-64" stroke="#f59e0b" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+      const iconUrl = 'data:image/svg+xml;base64,' + btoa(iconSvg);
+
+      const appleIcon = document.createElement('link');
+      appleIcon.rel = 'apple-touch-icon';
+      appleIcon.href = iconUrl;
+      document.head.appendChild(appleIcon);
+
+      const manifest = {
+        name: 'Mandya Properties | ಮಂಡ್ಯ ಪ್ರಾಪರ್ಟೀಸ್',
+        short_name: 'Mandya Properties',
+        description: 'Bilingual Real Estate Marketplace for Sale, Rent & Lease of Residential, Commercial & Agricultural Properties.',
+        start_url: './',
+        display: 'standalone',
+        background_color: '#0f172a',
+        theme_color: '#0f172a',
+        icons: [
+          { src: iconUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+          { src: iconUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+        ]
+      };
+      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+      const manifestLink = document.createElement('link');
+      manifestLink.rel = 'manifest';
+      manifestLink.href = URL.createObjectURL(manifestBlob);
+      document.head.appendChild(manifestLink);
+
+      if ('serviceWorker' in navigator) {
+        const swCode = `
+          const CACHE_NAME = 'acre-arch-v1';
+          self.addEventListener('install', (e) => self.skipWaiting());
+          self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+          self.addEventListener('fetch', (e) => {
+            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+      }
+    })();
+
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+    });
+
+    function triggerPwaInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then(() => {
+          deferredInstallPrompt = null;
+          dismissInstallBanner();
+        });
+      } else {
+        openInstallGuide();
+      }
+    }
+    function dismissInstallBanner() {
+      document.getElementById('pwa-install-banner').classList.add('hidden');
+    }
+    function openInstallGuide() {
+      document.getElementById('install-guide-modal').classList.remove('hidden');
+    }
+    function closeInstallGuide() {
+      document.getElementById('install-guide-modal').classList.add('hidden');
+    }
+
+    // 2. BILINGUAL DICTIONARY (ENGLISH & KANNADA)
+    const I18N = {
+      en: {
+        brandName: 'Mandya Properties',
+        brandSub: 'Verified Estates',
+        pwaBanner: 'Install Mandya Properties on your mobile home screen for instant property alerts.',
+        installApp: 'Install App',
+        mobileGuide: 'Mobile Guide',
+        navListings: 'Browse Properties',
+        navPost: 'Post Property',
+        navAdmin: 'Admin Portal',
+        mNavListings: 'Listings',
+        mNavPost: 'Post',
+        mNavAdmin: 'Admin',
+        heroBadge: 'Admin-Verified Real Estate Marketplace',
+        heroTitle: 'Find Your Next <span class="text-amber-400">Residential, Commercial</span> or <span class="text-emerald-400">Agricultural</span> Property',
+        heroSubtitle: 'Explore admin-vetted properties available for Sale, Rent, and Long-Term Lease across Karnataka. Have a property? Submit your listing for quick verification.',
+        heroCtaPost: 'Post Your Property',
+        heroCtaExplore: 'Explore Listings',
+        statTotal: 'Verified Listings',
+        statRes: 'Residential',
+        statCom: 'Commercial',
+        statAgr: 'Agricultural',
+        searchPlaceholder: 'Search city, locality, title...',
+        transAll: 'All Listing Types (Sale/Rent/Lease)',
+        transSale: 'For Sale',
+        transRent: 'For Rent',
+        transLease: 'For Lease',
+        catAll: 'All Categories',
+        catRes: 'Residential',
+        catCom: 'Commercial',
+        catAgr: 'Agricultural',
+        availAll: 'All Statuses',
+        availYes: 'Available Only',
+        availNo: 'Sold / Rented / Leased',
+        pillAll: 'All',
+        reset: 'Reset',
+        showingCount: (n) => `Showing ${n} ${n === 1 ? 'property' : 'properties'}`,
+        emptyTitle: 'No Matching Properties Found',
+        emptySubtitle: 'Try clearing your search filters or check back after our admin team approves new submissions.',
+        clearFilters: 'Clear Filters',
+        viewDetails: 'View Details',
+        perMonth: '/ month',
+        perYear: '/ year',
+        crore: 'Cr',
+        lakh: 'Lakhs',
+        statusAvailable: 'Available',
+        statusSold: 'Sold Out',
+        statusRented: 'Rented Out',
+        statusLeased: 'Leased Out',
+        postBadge: 'Owner & Broker Submission',
+        postHeading: 'List Your Property for Review',
+        postSubheading: 'All submitted listings are verified by our Admin team before appearing publicly.',
+        autofillBtn: '✨ Auto-Fill Demo Data',
+        lblTransaction: 'Listing Type *',
+        lblCategory: 'Property Category *',
+        lblTitleEn: 'Property Title (English) *',
+        lblTitleKn: 'Property Title (ಕನ್ನಡ - Optional)',
+        lblLocation: 'City / Locality / Village *',
+        lblPrice: 'Expected Price / Rent (₹ INR) *',
+        lblArea: 'Total Area / Land Size *',
+        lblSpecs: 'Key Highlights / Specs *',
+        lblImage: 'Property Photo URL (Optional)',
+        lblImageHint: 'Leave blank to automatically assign a verified category cover photo.',
+        lblDesc: 'Detailed Description *',
+        lblOwnerSection: 'Owner / Contact Information',
+        lblOwnerName: 'Full Name *',
+        lblOwnerPhone: 'Phone / WhatsApp Number *',
+        submitDisclaimer: 'Status after submission: <strong class="text-amber-600">Pending Admin Approval</strong>',
+        submitBtn: 'Submit for Admin Review',
+        hintRes: 'Specify Sq.Ft or Sq.Yards for residential plots, apartments, or villas.',
+        hintCom: 'Specify carpet/built-up Sq.Ft, frontage, or floor count for commercial spaces.',
+        hintAgr: 'Specify Acres or Guntas, water source (borewell/canal), and soil type.',
+        loginTitle: 'Admin Moderation Portal',
+        loginSubtitle: 'Sign in to approve, reject, update availability, or remove listings.',
+        lblAdminEmail: 'Admin Email',
+        lblAdminPass: 'Password',
+        loginBtn: 'Sign In to Dashboard',
+        quickFill: 'Quick Fill',
+        adminSessionBadge: 'Authenticated Admin Session',
+        dashTitle: 'Property Moderation & Inventory Control',
+        dashSubtitle: 'Review user submissions, toggle availability (Sold/Rented/Leased), or delete outdated listings.',
+        restoreDemo: 'Restore Sample Data',
+        logout: 'Logout',
+        kpiPending: 'Pending Review',
+        kpiApproved: 'Published Live',
+        kpiClosed: 'Sold / Rented / Leased',
+        kpiRejected: 'Rejected',
+        tabPending: 'Pending Approval',
+        tabApproved: 'Published Listings',
+        tabRejected: 'Rejected',
+        btnApprove: 'Approve & Publish',
+        btnReject: 'Reject',
+        btnRemove: 'Delete',
+        btnMarkAvail: 'Mark Available',
+        btnMarkClosed: (t) => t === 'Sale' ? 'Mark Sold' : (t === 'Rent' ? 'Mark Rented' : 'Mark Leased'),
+        adminEmptyTab: 'No listings in this queue.',
+        modalOverview: 'Property Overview',
+        modalContactLbl: 'Verified Listing Contact',
+        modalVisitBtn: 'Request Site Visit',
+        guideTitle: 'Install App on Your Mobile',
+        guideIntro: 'Add Mandya Properties to your home screen for full-screen mobile access, offline browsing, and quick property posting.',
+        guideAndroidTitle: 'Android (Chrome / Edge)',
+        guideAndroidSteps: 'Tap the <strong>⋮ Menu</strong> icon in the top-right corner of Chrome and select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.',
+        guideIosTitle: 'iPhone / iPad (Safari)',
+        guideIosSteps: 'Tap the <strong>Share</strong> icon at the bottom of Safari, scroll down, and tap <strong>"Add to Home Screen"</strong>.',
+        guideInstallNow: 'Install Prompt',
+        guideClose: 'Got It',
+        footerTagline: 'Residential, Commercial & Agricultural Estates',
+        toastSubmitted: 'Property submitted! It is now in the Admin Approval Queue.',
+        toastApproved: 'Property approved and published to live listings!',
+        toastRejected: 'Property submission rejected.',
+        toastRemoved: 'Property permanently removed.',
+        toastStatusUpdated: 'Availability status updated!',
+        toastVisitBooked: 'Site visit request sent! Our relationship manager will call you shortly.',
+        toastDemoFilled: 'Demo property details filled! Click Submit to test admin review.'
+      },
+      kn: {
+        brandName: 'ಮಂಡ್ಯ ಪ್ರಾಪರ್ಟೀಸ್',
+        brandSub: 'ದೃಢೀಕೃತ ರಿಯಲ್ ಎಸ್ಟೇಟ್',
+        pwaBanner: 'ತ್ವರಿತ ಆಸ್ತಿ ಮಾಹಿತಿಗಾಗಿ ನಿಮ್ಮ ಮೊಬೈಲ್ ಹೋಮ್ ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಮಂಡ್ಯ ಪ್ರಾಪರ್ಟೀಸ್ ಆಪ್ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ.',
+        installApp: 'ಆಪ್ ಇನ್‌ಸ್ಟಾಲ್',
+        mobileGuide: 'ಮೊಬೈಲ್ ಮಾರ್ಗದರ್ಶಿ',
+        navListings: 'ಆಸ್ತಿಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
+        navPost: 'ಆಸ್ತಿ ಸೇರಿಸಿ',
+        navAdmin: 'ಅಡ್ಮಿನ್ ಪೋರ್ಟಲ್',
+        mNavListings: 'ಆಸ್ತಿಗಳು',
+        mNavPost: 'ಸೇರಿಸಿ',
+        mNavAdmin: 'ಅಡ್ಮಿನ್',
+        heroBadge: 'ಅಡ್ಮಿನ್-ದೃಢೀಕೃತ ರಿಯಲ್ ಎಸ್ಟೇಟ್ ಮಾರುಕಟ್ಟೆ',
+        heroTitle: 'ನಿಮ್ಮ ಕನಸಿನ <span class="text-amber-400">ವಸತಿ, ವಾಣಿಜ್ಯ</span> ಅಥವಾ <span class="text-emerald-400">ಕೃಷಿ</span> ಆಸ್ತಿಯನ್ನು ಹುಡುಕಿ',
+        heroSubtitle: 'ಕರ್ನಾಟಕದಾದ್ಯಂತ ಮಾರಾಟ, ಬಾಡಿಗೆ ಮತ್ತು ದೀರ್ಘಾವಧಿಯ ಲೀಸ್‌ಗೆ ಲಭ್ಯವಿರುವ ದೃಢೀಕೃತ ಆಸ್ತಿಗಳನ್ನು ವೀಕ್ಷಿಸಿ. ನಿಮ್ಮ ಆಸ್ತಿಯನ್ನು ಮಾರಾಟ ಅಥವಾ ಬಾಡಿಗೆಗೆ ನೀಡಲು ಈಗಲೇ ಪೋಸ್ಟ್ ಮಾಡಿ.',
+        heroCtaPost: 'ನಿಮ್ಮ ಆಸ್ತಿ ಪೋಸ್ಟ್ ಮಾಡಿ',
+        heroCtaExplore: 'ಪಟ್ಟಿಗಳನ್ನು ನೋಡಿ',
+        statTotal: 'ದೃಢೀಕೃತ ಆಸ್ತಿಗಳು',
+        statRes: 'ವಸತಿ (Residential)',
+        statCom: 'ವಾಣಿಜ್ಯ (Commercial)',
+        statAgr: 'ಕೃಷಿ ಭೂಮಿ (Agricultural)',
+        searchPlaceholder: 'ನಗರ, ಪ್ರದೇಶ ಅಥವಾ ಆಸ್ತಿ ಹೆಸರು ಹುಡುಕಿ...',
+        transAll: 'ಎಲ್ಲಾ ವಿಧಗಳು (ಮಾರಾಟ/ಬಾಡಿಗೆ/ಲೀಸ್)',
+        transSale: 'ಮಾರಾಟಕ್ಕೆ (Sale)',
+        transRent: 'ಬಾಡಿಗೆಗೆ (Rent)',
+        transLease: 'ಲೀಸ್‌ಗೆ (Lease)',
+        catAll: 'ಎಲ್ಲಾ ವರ್ಗಗಳು',
+        catRes: 'ವಸತಿ (Residential)',
+        catCom: 'ವಾಣಿಜ್ಯ (Commercial)',
+        catAgr: 'ಕೃಷಿ ಭೂಮಿ (Agricultural)',
+        availAll: 'ಎಲ್ಲಾ ಸ್ಥಿತಿಗಳು',
+        availYes: 'ಲಭ್ಯವಿರುವವು ಮಾತ್ರ',
+        availNo: 'ಮಾರಾಟ / ಬಾಡಿಗೆ / ಲೀಸ್ ಆಗಿದೆ',
+        pillAll: 'ಎಲ್ಲಾ',
+        reset: 'ಮರುಹೊಂದಿಸಿ',
+        showingCount: (n) => `${n} ಆಸ್ತಿಗಳನ್ನು ತೋರಿಸಲಾಗುತ್ತಿದೆ`,
+        emptyTitle: 'ಯಾವುದೇ ಆಸ್ತಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ',
+        emptySubtitle: 'ದಯವಿಟ್ಟು ಫಿಲ್ಟರ್‌ಗಳನ್ನು ಬದಲಾಯಿಸಿ ಅಥವಾ ಅಡ್ಮಿನ್ ಅನುಮೋದನೆಯ ನಂತರ ಮತ್ತೆ ಪರಿಶೀಲಿಸಿ.',
+        clearFilters: 'ಫಿಲ್ಟರ್ ತೆರವುಗೊಳಿಸಿ',
+        viewDetails: 'ವಿವರಗಳನ್ನು ನೋಡಿ',
+        perMonth: '/ ತಿಂಗಳು',
+        perYear: '/ ವರ್ಷ',
+        crore: 'ಕೋಟಿ',
+        lakh: 'ಲಕ್ಷ',
+        statusAvailable: 'ಲಭ್ಯವಿದೆ',
+        statusSold: 'ಮಾರಾಟವಾಗಿದೆ',
+        statusRented: 'ಬಾಡಿಗೆಗೆ ನೀಡಲಾಗಿದೆ',
+        statusLeased: 'ಲೀಸ್ ನೀಡಲಾಗಿದೆ',
+        postBadge: 'ಮಾಲೀಕರು ಮತ್ತು ಬ್ರೋಕರ್ ಸಲ್ಲಿಕೆ',
+        postHeading: 'ಪರಿಶೀಲನೆಗಾಗಿ ನಿಮ್ಮ ಆಸ್ತಿಯನ್ನು ಸೇರಿಸಿ',
+        postSubheading: 'ಎಲ್ಲಾ ಸಲ್ಲಿಕೆಗಳನ್ನು ಸಾರ್ವಜನಿಕವಾಗಿ ಪ್ರದರ್ಶಿಸುವ ಮೊದಲು ನಮ್ಮ ಅಡ್ಮಿನ್ ತಂಡ ಪರಿಶೀಲಿಸುತ್ತದೆ.',
+        autofillBtn: '✨ ಡೆಮೊ ಮಾಹಿತಿ ಭರ್ತಿ ಮಾಡಿ',
+        lblTransaction: 'ವ್ಯವಹಾರದ ವಿಧ *',
+        lblCategory: 'ಆಸ್ತಿಯ ವರ್ಗ *',
+        lblTitleEn: 'ಆಸ್ತಿಯ ಶೀರ್ಷಿಕೆ (English) *',
+        lblTitleKn: 'ಆಸ್ತಿಯ ಶೀರ್ಷಿಕೆ (ಕನ್ನಡ - ಐಚ್ಛಿಕ)',
+        lblLocation: 'ನಗರ / ಪ್ರದೇಶ / ಗ್ರಾಮ *',
+        lblPrice: 'ನಿರೀಕ್ಷಿತ ಬೆಲೆ / ಬಾಡಿಗೆ (₹ INR) *',
+        lblArea: 'ಒಟ್ಟು ವಿಸ್ತೀರ್ಣ / ಭೂಮಿಯ ಅಳತೆ *',
+        lblSpecs: 'ಪ್ರಮುಖ ವಿಶೇಷತೆಗಳು *',
+        lblImage: 'ಆಸ್ತಿ ಫೋಟೋ ಲಿಂಕ್ (ಐಚ್ಛಿಕ)',
+        lblImageHint: 'ಖಾಲಿ ಬಿಟ್ಟರೆ ವರ್ಗಕ್ಕೆ ತಕ್ಕಂತೆ ದೃಢೀಕೃತ ಫೋಟೋ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸೇರುತ್ತದೆ.',
+        lblDesc: 'ವಿವರವಾದ ಮಾಹಿತಿ *',
+        lblOwnerSection: 'ಮಾಲೀಕರ / ಸಂಪರ್ಕ ವಿವರಗಳು',
+        lblOwnerName: 'ಪೂರ್ಣ ಹೆಸರು *',
+        lblOwnerPhone: 'ಫೋನ್ / ವಾಟ್ಸಾಪ್ ಸಂಖ್ಯೆ *',
+        submitDisclaimer: 'ಸಲ್ಲಿಕೆಯ ನಂತರದ ಸ್ಥಿತಿ: <strong class="text-amber-600">ಅಡ್ಮಿನ್ ಅನುಮೋದನೆಗೆ ಬಾಕಿ ಇದೆ</strong>',
+        submitBtn: 'ಅಡ್ಮಿನ್ ಪರಿಶೀಲನೆಗೆ ಸಲ್ಲಿಸಿ',
+        hintRes: 'ಮನೆ, ನಿವೇಶನ ಅಥವಾ ಅಪಾರ್ಟ್‌ಮೆಂಟ್‌ಗಳಿಗೆ ಚದರ ಅಡಿ (Sq.Ft) ನಮೂದಿಸಿ.',
+        hintCom: 'ಕಚೇರಿ ಅಥವಾ ಅಂಗಡಿಗಳಿಗೆ ಕಾರ್ಪೆಟ್ ವಿಸ್ತೀರ್ಣ (Sq.Ft) ನಮೂದಿಸಿ.',
+        hintAgr: 'ಎಕರೆ ಅಥವಾ ಗುಂಟೆ, ನೀರಿನ ಮೂಲ (ಬೋರ್‌ವೆಲ್/ನಾಲೆ) ಮತ್ತು ಮಣ್ಣಿನ ವಿಧ ನಮೂದಿಸಿ.',
+        loginTitle: 'ಅಡ್ಮಿನ್ ನಿಯಂತ್ರಣ ಪೋರ್ಟಲ್',
+        loginSubtitle: 'ಆಸ್ತಿಗಳನ್ನು ಅನುಮೋದಿಸಲು, ತಿರಸ್ಕರಿಸಲು ಅಥವಾ ಲಭ್ಯತೆಯನ್ನು ಬದಲಾಯಿಸಲು ಲಾಗಿನ್ ಆಗಿ.',
+        lblAdminEmail: 'ಅಡ್ಮಿನ್ ಇಮೇಲ್',
+        lblAdminPass: 'ಪಾಸ್‌ವರ್ಡ್',
+        loginBtn: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಲಾಗಿನ್ ಆಗಿ',
+        quickFill: 'ತ್ವರಿತ ಭರ್ತಿ',
+        adminSessionBadge: 'ಅಧಿಕೃತ ಅಡ್ಮಿನ್ ಸೆಷನ್',
+        dashTitle: 'ಆಸ್ತಿ ಪರಿಶೀಲನೆ ಮತ್ತು ಲಭ್ಯತೆ ನಿಯಂತ್ರಣ',
+        dashSubtitle: 'ಬಳಕೆದಾರರ ಸಲ್ಲಿಕೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ, ಲಭ್ಯತೆ ಬದಲಾಯಿಸಿ ಅಥವಾ ಹಳೆಯ ಪಟ್ಟಿಗಳನ್ನು ತೆಗೆದುಹಾಕಿ.',
+        restoreDemo: 'ಮಾದರಿ ಡೇಟಾ ಮರುಸ್ಥಾಪಿಸಿ',
+        logout: 'ಲಾಗ್ ಔಟ್',
+        kpiPending: 'ಪರಿಶೀಲನೆಗೆ ಬಾಕಿ',
+        kpiApproved: 'ಪ್ರಕಟಿತ ಆಸ್ತಿಗಳು',
+        kpiClosed: 'ಮಾರಾಟ / ಬಾಡಿಗೆ / ಲೀಸ್',
+        kpiRejected: 'ತಿರಸ್ಕರಿಸಲಾಗಿದೆ',
+        tabPending: 'ಅನುಮೋದನೆಗೆ ಬಾಕಿ',
+        tabApproved: 'ಪ್ರಕಟಿತ ಪಟ್ಟಿಗಳು',
+        tabRejected: 'ತಿರಸ್ಕರಿಸಿದವು',
+        btnApprove: 'ಅನುಮೋದಿಸಿ & ಪ್ರಕಟಿಸಿ',
+        btnReject: 'ತಿರಸ್ಕರಿಸಿ',
+        btnRemove: 'ಅಳಿಸಿ',
+        btnMarkAvail: 'ಲಭ್ಯವಿದೆ ಎಂದು ಗುರುತಿಸಿ',
+        btnMarkClosed: (t) => t === 'Sale' ? 'ಮಾರಾಟವಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ' : (t === 'Rent' ? 'ಬಾಡಿಗೆಗೆ ನೀಡಲಾಗಿದೆ' : 'ಲೀಸ್ ನೀಡಲಾಗಿದೆ'),
+        adminEmptyTab: 'ಈ ವಿಭಾಗದಲ್ಲಿ ಯಾವುದೇ ಆಸ್ತಿಗಳಿಲ್ಲ.',
+        modalOverview: 'ಆಸ್ತಿಯ ಸಂಪೂರ್ಣ ವಿವರ',
+        modalContactLbl: 'ದೃಢೀಕೃತ ಸಂಪರ್ಕ ವ್ಯಕ್ತಿ',
+        modalVisitBtn: 'ಸ್ಥಳ ಭೇಟಿಗೆ ವಿನಂತಿಸಿ',
+        guideTitle: 'ನಿಮ್ಮ ಮೊಬೈಲ್‌ನಲ್ಲಿ ಆಪ್ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ',
+        guideIntro: 'ಪೂರ್ಣ-ಪರದೆಯ ಮೊಬೈಲ್ ಅನುಭವ ಮತ್ತು ತ್ವರಿತ ಆಸ್ತಿ ಪೋಸ್ಟಿಂಗ್‌ಗಾಗಿ ನಿಮ್ಮ ಹೋಮ್ ಸ್ಕ್ರೀನ್‌ಗೆ ಮಂಡ್ಯ ಪ್ರಾಪರ್ಟೀಸ್ ಸೇರಿಸಿ.',
+        guideAndroidTitle: 'ಆಂಡ್ರಾಯ್ಡ್ (Chrome / Edge)',
+        guideAndroidSteps: 'Chrome ಬ್ರೌಸರ್‌ನ ಮೇಲಿನ ಬಲ ಮೂಲೆಯಲ್ಲಿರುವ <strong>⋮ ಮೆನು</strong> ಒತ್ತಿ ಮತ್ತು <strong>"Install app"</strong> ಅಥವಾ <strong>"Add to Home screen"</strong> ಆಯ್ಕೆಮಾಡಿ.',
+        guideIosTitle: 'ಐಫೋನ್ / ಐಪ್ಯಾಡ್ (Safari)',
+        guideIosSteps: 'Safari ಕೆಳಭಾಗದಲ್ಲಿರುವ <strong>Share</strong> ಐಕಾನ್ ಒತ್ತಿ, ಕೆಳಗೆ ಸ್ಕ್ರಾಲ್ ಮಾಡಿ <strong>"Add to Home Screen"</strong> ಆಯ್ಕೆಮಾಡಿ.',
+        guideInstallNow: 'ಈಗ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ',
+        guideClose: 'ಸರಿ',
+        footerTagline: 'ವಸತಿ, ವಾಣಿಜ್ಯ ಮತ್ತು ಕೃಷಿ ಆಸ್ತಿಗಳ ಮಾರುಕಟ್ಟೆ',
+        toastSubmitted: 'ಆಸ್ತಿ ಸಲ್ಲಿಸಲಾಗಿದೆ! ಅಡ್ಮಿನ್ ಅನುಮೋದನೆಯ ನಂತರ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಪ್ರಕಟವಾಗುತ್ತದೆ.',
+        toastApproved: 'ಆಸ್ತಿಯನ್ನು ಅನುಮೋದಿಸಿ ಸಾರ್ವಜನಿಕವಾಗಿ ಪ್ರಕಟಿಸಲಾಗಿದೆ!',
+        toastRejected: 'ಆಸ್ತಿ ಸಲ್ಲಿಕೆಯನ್ನು ತಿರಸ್ಕರಿಸಲಾಗಿದೆ.',
+        toastRemoved: 'ಆಸ್ತಿಯನ್ನು ಶಾಶ್ವತವಾಗಿ ತೆಗೆದುಹಾಕಲಾಗಿದೆ.',
+        toastStatusUpdated: 'ಆಸ್ತಿಯ ಲಭ್ಯತೆಯ ಸ್ಥಿತಿಯನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ!',
+        toastVisitBooked: 'ಸ್ಥಳ ಭೇಟಿ ವಿನಂತಿ ಕಳುಹಿಸಲಾಗಿದೆ! ನಮ್ಮ ಪ್ರತಿನಿಧಿ ಶೀಘ್ರದಲ್ಲೇ ಕರೆ ಮಾಡುತ್ತಾರೆ.',
+        toastDemoFilled: 'ಡೆಮೊ ಮಾಹಿತಿ ಭರ್ತಿಯಾಗಿದೆ! ಅಡ್ಮಿನ್ ಪರಿಶೀಲನೆಗಾಗಿ ಸಲ್ಲಿಸಿ ಒತ್ತಿ.'
+      }
+    };
+
+    // 3. SEED DATA (BILINGUAL ENGLISH + KANNADA PROPERTIES)
+    const DEFAULT_IMAGES = {
+      Residential: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=900&q=80',
+      Commercial: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80',
+      Agricultural: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80'
+    };
+
+    const INITIAL_PROPERTIES = [
+      {
+        id: 'prop-101',
+        transactionType: 'Sale',
+        category: 'Residential',
+        titleEn: '4 BHK Courtyard Villa in Vijayanagar',
+        titleKn: 'ವಿಜಯನಗರದಲ್ಲಿ 4 BHK ಅಂಗಳದ ಐಷಾರಾಮಿ ವಿಲ್ಲಾ',
+        locationEn: 'Vijayanagar 2nd Stage, Mysuru',
+        locationKn: 'ವಿಜಯನಗರ 2ನೇ ಹಂತ, ಮೈಸೂರು',
+        price: 18500000,
+        areaEn: '3,200 Sq.Ft',
+        areaKn: '3,200 ಚದರ ಅಡಿ',
+        specsEn: '4 Beds • 4 Baths • North Facing • MUDA Approved',
+        specsKn: '4 ಬೆಡ್‌ರೂಮ್ • 4 ಬಾತ್‌ರೂಮ್ • ಉತ್ತರ ದಿಕ್ಕು • ಮುಡಾ ಅನುಮೋದಿತ',
+        descriptionEn: 'Architect-designed independent duplex villa with teakwood interiors, solar water heating, rainwater harvesting, and covered parking for 2 cars.',
+        descriptionKn: 'ತೇಗದ ಮರದ ಒಳಾಂಗಣ, ಸೋಲಾರ್ ವಾಟರ್ ಹೀಟರ್, ಮಳೆನೀರು ಕೊಯ್ಲು ಮತ್ತು 2 ಕಾರುಗಳ ಪಾರ್ಕಿಂಗ್ ಹೊಂದಿರುವ ಸುಂದರ ಸ್ವತಂತ್ರ ವಿಲ್ಲಾ.',
+        ownerName: 'Mahesh Kulkarni',
+        ownerPhone: '+91 98451 22334',
+        image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=900&q=80',
+        approvalStatus: 'approved',
+        available: true,
+        createdAt: '2026-11-12'
+      },
+      {
+        id: 'prop-102',
+        transactionType: 'Rent',
+        category: 'Commercial',
+        titleEn: 'Grade-A Tech Office Floor on 100 Feet Road',
+        titleKn: '100 ಅಡಿ ರಸ್ತೆಯಲ್ಲಿ ಗ್ರೇಡ್-ಎ ಕಚೇರಿ ಮಹಡಿ',
+        locationEn: 'Indiranagar, Bengaluru',
+        locationKn: 'ಇಂದಿರಾನಗರ, ಬೆಂಗಳೂರು',
+        price: 165000,
+        areaEn: '2,800 Sq.Ft',
+        areaKn: '2,800 ಚದರ ಅಡಿ',
+        specsEn: '45 Workstations • 2 Cabins • 100% DG Backup • Metro 300m',
+        specsKn: '45 ವರ್ಕ್‌ಸ್ಟೇಷನ್ • 2 ಕ್ಯಾಬಿನ್ • ಪೂರ್ಣ ಪವರ್ ಬ್ಯಾಕಪ್ • ಮೆಟ್ರೋ ಹತ್ತಿರ',
+        descriptionEn: 'Plug-and-play commercial office floor with conference room, biometric entry, cafeteria pantry, and basement parking.',
+        descriptionKn: 'ಕಾನ್ಫರೆನ್ಸ್ ಹಾಲ್, ಬಯೋಮೆಟ್ರಿಕ್ ಪ್ರವೇಶ, ಪ್ಯಾಂಟ್ರಿ ಮತ್ತು ಬೇಸ್‌ಮೆಂಟ್ ಪಾರ್ಕಿಂಗ್ ಹೊಂದಿರುವ ಸುಸಜ್ಜಿತ ಕಚೇರಿ ಸ್ಥಳ.',
+        ownerName: 'Priya Deshpande',
+        ownerPhone: '+91 99001 44556',
+        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=80',
+        approvalStatus: 'approved',
+        available: true,
+        createdAt: '2026-11-13'
+      },
+      {
+        id: 'prop-103',
+        transactionType: 'Sale',
+        category: 'Agricultural',
+        titleEn: '5.5 Acres Irrigated Sugarcane & Coconut Farm',
+        titleKn: '5.5 ಎಕರೆ ನೀರಾವರಿ ಕಬ್ಬು ಮತ್ತು ತೆಂಗಿನ ತೋಟ',
+        locationEn: 'Maddur Taluk, Mandya District',
+        locationKn: 'ಮದ್ದೂರು ತಾಲ್ಲೂಕು, ಮಂಡ್ಯ ಜಿಲ್ಲೆ',
+        price: 22000000,
+        areaEn: '5.5 Acres',
+        areaKn: '5.5 ಎಕರೆ',
+        specsEn: 'Canal + 2 Borewells • 180 Yielding Coconut Trees • Tar Road Touch',
+        specsKn: 'ನಾಲೆ + 2 ಬೋರ್‌ವೆಲ್ • 180 ತೆಂಗಿನ ಮರಗಳು • ಡಾಂಬರು ರಸ್ತೆ ಸಂಪರ್ಕ',
+        descriptionEn: 'Fertile red and black soil agricultural land with Vishvesvaraya canal water access, drip irrigation, farmhouse room, and clear single-owner RTC.',
+        descriptionKn: 'ವಿಶ್ವೇಶ್ವರಯ್ಯ ನಾಲೆ ನೀರಿನ ಸೌಲಭ್ಯ, ಹನಿ ನೀರಾವರಿ, ಫಾರ್ಮ್‌ಹೌಸ್ ಮತ್ತು ಸ್ಪಷ್ಟ ದಾಖಲೆಗಳನ್ನು (RTC) ಹೊಂದಿರುವ ಫಲವತ್ತಾದ ಕೃಷಿ ಭೂಮಿ.',
+        ownerName: 'Suresh Gowda',
+        ownerPhone: '+91 94480 77889',
+        image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80',
+        approvalStatus: 'approved',
+        available: true,
+        createdAt: '2026-11-14'
+      },
+      {
+        id: 'prop-104',
+        transactionType: 'Lease',
+        category: 'Commercial',
+        titleEn: 'Industrial Warehouse & Logistics Hub (NH-275)',
+        titleKn: 'ಕೈಗಾರಿಕಾ ಗೋದಾಮು ಮತ್ತು ಲಾಜಿಸ್ಟಿಕ್ಸ್ ಕೇಂದ್ರ (NH-275)',
+        locationEn: 'Bidadi Industrial Area, Ramanagara',
+        locationKn: 'ಬಿಡದಿ ಕೈಗಾರಿಕಾ ಪ್ರದೇಶ, ರಾಮನಗರ',
+        price: 240000,
+        areaEn: '12,000 Sq.Ft',
+        areaKn: '12,000 ಚದರ ಅಡಿ',
+        specsEn: '32 Ft Clear Height • 3 Loading Docks • 100 HP Power',
+        specsKn: '32 ಅಡಿ ಎತ್ತರ • 3 ಲೋಡಿಂಗ್ ಡಾಕ್ • 100 HP ವಿದ್ಯುತ್ ಸಂಪರ್ಕ',
+        descriptionEn: 'PEB warehouse suitable for FMCG, agro-storage, or manufacturing with wide container turning radius and 24/7 security.',
+        descriptionKn: 'ಎಫ್‌ಎಂಸಿಜಿ, ಕೃಷಿ ಸಂಗ್ರಹಣೆ ಅಥವಾ ಉತ್ಪಾದನೆಗೆ ಸೂಕ್ತವಾದ ವಿಶಾಲ ಗೋದಾಮು ಮತ್ತು 24/7 ಭದ್ರತಾ ವ್ಯವಸ್ಥೆ.',
+        ownerName: 'Kiran Shetty',
+        ownerPhone: '+91 98440 66112',
+        image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=80',
+        approvalStatus: 'approved',
+        available: true,
+        createdAt: '2026-11-15'
+      },
+      {
+        id: 'prop-105',
+        transactionType: 'Lease',
+        category: 'Agricultural',
+        titleEn: '8 Acres Coffee & Pepper Estate for Long-Term Lease',
+        titleKn: 'ದೀರ್ಘಾವಧಿಯ ಲೀಸ್‌ಗೆ 8 ಎಕರೆ ಕಾಫಿ ಮತ್ತು ಮೆಣಸಿನ ಎಸ್ಟೇಟ್',
+        locationEn: 'Sakleshpur, Hassan District',
+        locationKn: 'ಸಕಲೇಶಪುರ, ಹಾಸನ ಜಿಲ್ಲೆ',
+        price: 450000,
+        areaEn: '8 Acres',
+        areaKn: '8 ಎಕರೆ',
+        specsEn: 'Arabica & Robusta • Perennial Stream • Drying Yard & Quarters',
+        specsKn: 'ಅರೇಬಿಕಾ & ರೋಬಸ್ಟಾ • ನೀರಿನ ಝರಿ • ಒಣಗಿಸುವ ಅಂಗಳ ಮತ್ತು ವಸತಿ',
+        descriptionEn: 'Well-maintained shade-grown coffee and black pepper plantation available on a 5-to-10-year agricultural lease.',
+        descriptionKn: '5 ರಿಂದ 10 ವರ್ಷಗಳ ಕೃಷಿ ಲೀಸ್‌ಗೆ ಲಭ್ಯವಿರುವ ಉತ್ತಮ ನಿರ್ವಹಣೆಯ ಕಾಫಿ ಮತ್ತು ಕಾಳುಮೆಣಸಿನ ತೋಟ.',
+        ownerName: 'Dinesh Hegde',
+        ownerPhone: '+91 94491 33445',
+        image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=900&q=80',
+        approvalStatus: 'approved',
+        available: false,
+        createdAt: '2026-11-10'
+      },
+      {
+        id: 'prop-106',
+        transactionType: 'Rent',
+        category: 'Residential',
+        titleEn: '2 BHK Garden-Facing Apartment near Kuvempunagar',
+        titleKn: 'ಕುವೆಂಪುನಗರದ ಬಳಿ 2 BHK ಉದ್ಯಾನವನ ಮುಖದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್',
+        locationEn: 'Kuvempunagar, Mysuru',
+        locationKn: 'ಕುವೆಂಪುನಗರ, ಮೈಸೂರು',
+        price: 22000,
+        areaEn: '1,250 Sq.Ft',
+        areaKn: '1,250 ಚದರ ಅಡಿ',
+        specsEn: '2 Beds • 2 Baths • Semi-Furnished • Lift & Security',
+        specsKn: '2 ಬೆಡ್‌ರೂಮ್ • 2 ಬಾತ್‌ರೂಮ್ • ಸೆಮಿ-ಫರ್ನಿಶ್ಡ್ • ಲಿಫ್ಟ್ & ಭದ್ರತೆ',
+        descriptionEn: 'Peaceful family apartment with modular kitchen, wardrobes, balcony overlooking park, and Kaveri water supply.',
+        descriptionKn: 'ಮಾಡ್ಯುಲರ್ ಕಿಚನ್, ವಾರ್ಡ್‌ರೋಬ್‌ಗಳು, ಉದ್ಯಾನವನದ ನೋಟ ಹೊಂದಿರುವ ಬಾಲ್ಕನಿ ಮತ್ತು ಕಾವೇರಿ ನೀರಿನ ಸೌಲಭ್ಯವಿರುವ ಕುಟುಂಬದ ಫ್ಲಾಟ್.',
+        ownerName: 'Anitha Rao',
+        ownerPhone: '+91 97412 88990',
+        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80',
+        approvalStatus: 'pending',
+        available: true,
+        createdAt: '2026-11-17'
+      }
+    ];
+
+    // 4. APPLICATION STATE
+    let currentLang = localStorage.getItem('acre_arch_lang') || 'en';
+    let currentView = 'listings';
+    let isAdminLoggedIn = sessionStorage.getItem('acre_arch_admin') === 'true';
+    let currentAdminTab = 'pending';
+    let properties = [];
+
+    function loadProperties() {
+      const saved = localStorage.getItem('acre_arch_properties_v1');
+      if (saved) {
+        try {
+          properties = JSON.parse(saved);
+        } catch (e) {
+          properties = [...INITIAL_PROPERTIES];
+        }
+      } else {
+        properties = [...INITIAL_PROPERTIES];
+        saveProperties();
+      }
+    }
+
+    function saveProperties() {
+      localStorage.setItem('acre_arch_properties_v1', JSON.stringify(properties));
+      updateBadgesAndCounts();
+    }
+
+    // 5. CURRENCY & LOCALIZATION HELPERS
+    function formatINR(amount, transactionType) {
+      const t = I18N[currentLang];
+      let formatted = '';
+      if (amount >= 10000000) {
+        formatted = '₹ ' + (amount / 10000000).toFixed(2).replace(/\.00$/, '') + ' ' + t.crore;
+      } else if (amount >= 100000) {
+        formatted = '₹ ' + (amount / 100000).toFixed(2).replace(/\.00$/, '') + ' ' + t.lakh;
+      } else {
+        formatted = '₹ ' + Number(amount).toLocaleString('en-IN');
+      }
+      if (transactionType === 'Rent') return `${formatted} ${t.perMonth}`;
+      if (transactionType === 'Lease') return `${formatted} ${t.perYear}`;
+      return formatted;
+    }
+
+    function getLocalizedField(prop, baseKey) {
+      if (currentLang === 'kn') {
+        return prop[baseKey + 'Kn'] || prop[baseKey + 'En'] || prop[baseKey] || '';
+      }
+      return prop[baseKey + 'En'] || prop[baseKey + 'Kn'] || prop[baseKey] || '';
+    }
+
+    function translateTransaction(type) {
+      const t = I18N[currentLang];
+      if (type === 'Sale') return t.transSale;
+      if (type === 'Rent') return t.transRent;
+      if (type === 'Lease') return t.transLease;
+      return type;
+    }
+
+    function translateCategory(cat) {
+      const t = I18N[currentLang];
+      if (cat === 'Residential') return t.catRes;
+      if (cat === 'Commercial') return t.catCom;
+      if (cat === 'Agricultural') return t.catAgr;
+      return cat;
+    }
+
+    function translateAvailability(prop) {
+      const t = I18N[currentLang];
+      if (prop.available) return t.statusAvailable;
+      if (prop.transactionType === 'Sale') return t.statusSold;
+      if (prop.transactionType === 'Rent') return t.statusRented;
+      return t.statusLeased;
+    }
+
+    // 6. LANGUAGE SWITCHER
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('acre_arch_lang', lang);
+      document.documentElement.lang = lang;
+
+      // Toggle buttons styling
+      const btnEn = document.getElementById('lang-btn-en');
+      const btnKn = document.getElementById('lang-btn-kn');
+      if (lang === 'en') {
+        btnEn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer bg-amber-500 text-slate-950 shadow-sm';
+        btnKn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer text-slate-300 hover:text-white';
+      } else {
+        btnKn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer bg-amber-500 text-slate-950 shadow-sm';
+        btnEn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer text-slate-300 hover:text-white';
+      }
+
+      const t = I18N[lang];
+      document.getElementById('brand-name').textContent = t.brandName;
+      document.getElementById('brand-sub').textContent = t.brandSub;
+      document.getElementById('pwa-banner-text').textContent = t.pwaBanner;
+      document.getElementById('pwa-install-btn').textContent = t.installApp;
+      document.getElementById('pwa-guide-link').textContent = t.mobileGuide;
+
+      document.getElementById('nav-listings').textContent = t.navListings;
+      document.getElementById('nav-post-label').textContent = t.navPost;
+      document.getElementById('nav-admin-label').textContent = t.navAdmin;
+      document.getElementById('m-nav-listings-label').textContent = t.mNavListings;
+      document.getElementById('m-nav-post-label').textContent = t.mNavPost;
+      document.getElementById('m-nav-admin-label').textContent = t.mNavAdmin;
+
+      document.getElementById('hero-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ${t.heroBadge}`;
+      document.getElementById('hero-title').innerHTML = t.heroTitle;
+      document.getElementById('hero-subtitle').textContent = t.heroSubtitle;
+      document.getElementById('hero-cta-post').querySelector('span').textContent = t.heroCtaPost;
+      document.getElementById('hero-cta-explore').textContent = t.heroCtaExplore;
+
+      document.getElementById('stat-total-label').textContent = t.statTotal;
+      document.getElementById('stat-res-label').textContent = t.statRes;
+      document.getElementById('stat-com-label').textContent = t.statCom;
+      document.getElementById('stat-agr-label').textContent = t.statAgr;
+
+      document.getElementById('filter-search').placeholder = t.searchPlaceholder;
+      document.getElementById('opt-trans-all').textContent = t.transAll;
+      document.getElementById('opt-trans-sale').textContent = t.transSale;
+      document.getElementById('opt-trans-rent').textContent = t.transRent;
+      document.getElementById('opt-trans-lease').textContent = t.transLease;
+
+      document.getElementById('opt-cat-all').textContent = t.catAll;
+      document.getElementById('opt-cat-res').textContent = t.catRes;
+      document.getElementById('opt-cat-com').textContent = t.catCom;
+      document.getElementById('opt-cat-agr').textContent = t.catAgr;
+
+      document.getElementById('opt-avail-all').textContent = t.availAll;
+      document.getElementById('opt-avail-yes').textContent = t.availYes;
+      document.getElementById('opt-avail-no').textContent = t.availNo;
+
+      document.querySelector('[data-cat="all"]').textContent = t.pillAll;
+      document.querySelector('[data-cat="Residential"]').textContent = t.statRes;
+      document.querySelector('[data-cat="Commercial"]').textContent = t.statCom;
+      document.querySelector('[data-cat="Agricultural"]').textContent = t.statAgr;
+      document.getElementById('reset-filters-btn').textContent = t.reset;
+
+      document.getElementById('empty-title').textContent = t.emptyTitle;
+      document.getElementById('empty-subtitle').textContent = t.emptySubtitle;
+      document.getElementById('empty-reset-btn').textContent = t.clearFilters;
+
+      // Post form labels
+      document.getElementById('post-badge').textContent = t.postBadge;
+      document.getElementById('post-heading').textContent = t.postHeading;
+      document.getElementById('post-subheading').textContent = t.postSubheading;
+      document.getElementById('autofill-btn').textContent = t.autofillBtn;
+      document.getElementById('lbl-transaction').textContent = t.lblTransaction;
+      document.getElementById('lbl-category').textContent = t.lblCategory;
+      document.getElementById('lbl-title-en').textContent = t.lblTitleEn;
+      document.getElementById('lbl-title-kn').textContent = t.lblTitleKn;
+      document.getElementById('lbl-location').textContent = t.lblLocation;
+      document.getElementById('lbl-price').textContent = t.lblPrice;
+      document.getElementById('lbl-area').textContent = t.lblArea;
+      document.getElementById('lbl-specs').textContent = t.lblSpecs;
+      document.getElementById('lbl-image').textContent = t.lblImage;
+      document.getElementById('lbl-image-hint').textContent = t.lblImageHint;
+      document.getElementById('lbl-desc').textContent = t.lblDesc;
+      document.getElementById('lbl-owner-section').textContent = t.lblOwnerSection;
+      document.getElementById('lbl-owner-name').textContent = t.lblOwnerName;
+      document.getElementById('lbl-owner-phone').textContent = t.lblOwnerPhone;
+      document.getElementById('submit-disclaimer').innerHTML = t.submitDisclaimer;
+      document.getElementById('submit-prop-btn').textContent = t.submitBtn;
+      updateCategoryHint();
+
+      // Admin labels
+      document.getElementById('login-title').textContent = t.loginTitle;
+      document.getElementById('login-subtitle').textContent = t.loginSubtitle;
+      document.getElementById('lbl-admin-email').textContent = t.lblAdminEmail;
+      document.getElementById('lbl-admin-pass').textContent = t.lblAdminPass;
+      document.getElementById('login-submit-btn').textContent = t.loginBtn;
+      document.getElementById('quick-fill-admin-btn').textContent = t.quickFill;
+      document.getElementById('admin-session-badge').textContent = t.adminSessionBadge;
+      document.getElementById('dash-title').textContent = t.dashTitle;
+      document.getElementById('dash-subtitle').textContent = t.dashSubtitle;
+      document.getElementById('reset-demo-btn').textContent = t.restoreDemo;
+      document.getElementById('logout-btn').textContent = t.logout;
+      document.getElementById('kpi-pending-lbl').textContent = t.kpiPending;
+      document.getElementById('kpi-approved-lbl').textContent = t.kpiApproved;
+      document.getElementById('kpi-closed-lbl').textContent = t.kpiClosed;
+      document.getElementById('kpi-rejected-lbl').textContent = t.kpiRejected;
+
+      // Guide & Footer
+      document.getElementById('guide-title').textContent = t.guideTitle;
+      document.getElementById('guide-intro').textContent = t.guideIntro;
+      document.getElementById('guide-android-title').textContent = t.guideAndroidTitle;
+      document.getElementById('guide-android-steps').innerHTML = t.guideAndroidSteps;
+      document.getElementById('guide-ios-title').textContent = t.guideIosTitle;
+      document.getElementById('guide-ios-steps').innerHTML = t.guideIosSteps;
+      document.getElementById('guide-install-now').textContent = t.guideInstallNow;
+      document.getElementById('guide-close-btn').textContent = t.guideClose;
+      document.getElementById('footer-tagline').textContent = t.footerTagline;
+      document.getElementById('footer-install-link').textContent = t.installApp;
+
+      renderListings();
+      if (isAdminLoggedIn) renderAdminDashboard();
+    }
+
+    // 7. VIEW NAVIGATION
+    function switchView(viewName) {
+      currentView = viewName;
+      ['listings', 'post', 'admin'].forEach(v => {
+        document.getElementById('view-' + v).classList.toggle('hidden', v !== viewName);
+        const navBtn = document.getElementById('nav-' + v);
+        if (v === viewName) {
+          navBtn.classList.add('bg-white/10', 'text-white');
+          navBtn.classList.remove('text-slate-300');
+        } else {
+          navBtn.classList.remove('bg-white/10', 'text-white');
+          navBtn.classList.add('text-slate-300');
+        }
+        const mBtn = document.getElementById('m-nav-' + v);
+        if (v === viewName) {
+          mBtn.classList.add('text-amber-400', 'border-b-2', 'border-amber-400');
+          mBtn.classList.remove('text-slate-400');
+        } else {
+          mBtn.classList.remove('text-amber-400', 'border-b-2', 'border-amber-400');
+          mBtn.classList.add('text-slate-400');
+        }
+      });
+
+      if (viewName === 'admin') {
+        updateAdminAuthView();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 8. PUBLIC LISTINGS RENDERING & FILTERING
+    function setQuickCategory(cat) {
+      document.getElementById('filter-category').value = cat;
+      document.querySelectorAll('.quick-pill').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = 'quick-pill px-3 py-1 rounded-full text-xs font-semibold bg-slate-900 text-white transition cursor-pointer';
+        } else {
+          btn.className = 'quick-pill px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer';
+        }
+      });
+      renderListings();
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-transaction').value = 'all';
+      document.getElementById('filter-category').value = 'all';
+      document.getElementById('filter-availability').value = 'all';
+      setQuickCategory('all');
+    }
+
+    function renderListings() {
+      const t = I18N[currentLang];
+      const keyword = document.getElementById('filter-search').value.trim().toLowerCase();
+      const transFilter = document.getElementById('filter-transaction').value;
+      const catFilter = document.getElementById('filter-category').value;
+      const availFilter = document.getElementById('filter-availability').value;
+
+      const approvedProps = properties.filter(p => p.approvalStatus === 'approved');
+
+      // Update Hero KPI counters
+      document.getElementById('stat-total-active').textContent = approvedProps.length;
+      document.getElementById('stat-res-count').textContent = approvedProps.filter(p => p.category === 'Residential').length;
+      document.getElementById('stat-com-count').textContent = approvedProps.filter(p => p.category === 'Commercial').length;
+      document.getElementById('stat-agr-count').textContent = approvedProps.filter(p => p.category === 'Agricultural').length;
+
+      const filtered = approvedProps.filter(p => {
+        if (transFilter !== 'all' && p.transactionType !== transFilter) return false;
+        if (catFilter !== 'all' && p.category !== catFilter) return false;
+        if (availFilter === 'Available' && !p.available) return false;
+        if (availFilter === 'Unavailable' && p.available) return false;
+        if (keyword) {
+          const hay = [
+            p.titleEn, p.titleKn, p.locationEn, p.locationKn,
+            p.specsEn, p.specsKn, p.descriptionEn, p.descriptionKn
+          ].join(' ').toLowerCase();
+          if (!hay.includes(keyword)) return false;
+        }
+        return true;
+      });
+
+      document.getElementById('results-count-label').textContent = t.showingCount(filtered.length);
+      const grid = document.getElementById('properties-grid');
+      const emptyState = document.getElementById('empty-listings-state');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = filtered.map(prop => {
+        const title = getLocalizedField(prop, 'title');
+        const location = getLocalizedField(prop, 'location');
+        const area = getLocalizedField(prop, 'area');
+        const specs = getLocalizedField(prop, 'specs');
+        const transLabel = translateTransaction(prop.transactionType);
+        const catLabel = translateCategory(prop.category);
+        const availLabel = translateAvailability(prop);
+
+        const transBadgeColor = prop.transactionType === 'Sale'
+          ? 'bg-amber-500 text-slate-950'
+          : (prop.transactionType === 'Rent' ? 'bg-sky-500 text-white' : 'bg-purple-600 text-white');
+
+        const availBadgeColor = prop.available
+          ? 'bg-emerald-500/95 text-white'
+          : 'bg-rose-600/95 text-white';
+
+        return `
+          <article class="bg-white rounded-3xl border border-slate-200/90 overflow-hidden shadow-sm card-hover flex flex-col ${!prop.available ? 'opacity-90' : ''}">
+            <div class="relative h-52 bg-slate-200 overflow-hidden">
+              <img src="${prop.image || DEFAULT_IMAGES[prop.category]}" alt="${title}" loading="lazy" class="w-full h-full object-cover ${!prop.available ? 'grayscale-[35%]' : ''}" />
+              <div class="absolute top-3.5 left-3.5 flex flex-wrap gap-1.5">
+                <span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wide shadow-sm ${transBadgeColor}">
+                  ${transLabel}
+                </span>
+                <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-950/80 text-white backdrop-blur-sm">
+                  ${catLabel}
+                </span>
+              </div>
+              <span class="absolute bottom-3.5 right-3.5 px-2.5 py-1 rounded-lg text-[11px] font-extrabold shadow ${availBadgeColor}">
+                ${availLabel}
+              </span>
+            </div>
+
+            <div class="p-5 flex-1 flex flex-col">
+              <div class="text-xl font-extrabold text-amber-600">${formatINR(prop.price, prop.transactionType)}</div>
+              <h3 class="text-base font-extrabold text-slate-900 mt-1 line-clamp-2 leading-snug">${title}</h3>
+              <p class="text-xs text-slate-500 flex items-center gap-1 mt-1.5">
+                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="truncate">${location}</span>
+              </p>
+
+              <div class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-600 font-medium line-clamp-1">
+                ${specs}
+              </div>
+
+              <div class="mt-auto pt-4 flex items-center justify-between gap-2">
+                <span class="inline-flex items-center gap-1 text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg">
+                  📐 ${area}
+                </span>
+                <button onclick="openPropertyModal('${prop.id}')" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-white text-xs font-bold transition cursor-pointer">
+                  ${t.viewDetails}
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // 9. PROPERTY DETAILS MODAL
+    function openPropertyModal(id) {
+      const prop = properties.find(p => p.id === id);
+      if (!prop) return;
+      const t = I18N[currentLang];
+
+      document.getElementById('modal-img').src = prop.image || DEFAULT_IMAGES[prop.category];
+      document.getElementById('modal-title').textContent = getLocalizedField(prop, 'title');
+      document.getElementById('modal-location').innerHTML = `📍 ${getLocalizedField(prop, 'location')}`;
+      document.getElementById('modal-price').textContent = formatINR(prop.price, prop.transactionType);
+      document.getElementById('modal-area').textContent = getLocalizedField(prop, 'area');
+      document.getElementById('modal-specs').textContent = getLocalizedField(prop, 'specs');
+      document.getElementById('modal-desc-heading').textContent = t.modalOverview;
+      document.getElementById('modal-desc').textContent = getLocalizedField(prop, 'description');
+      document.getElementById('modal-owner-lbl').textContent = t.modalContactLbl;
+      document.getElementById('modal-owner-name').textContent = prop.ownerName;
+      document.getElementById('modal-owner-phone').textContent = prop.ownerPhone;
+      document.getElementById('modal-visit-btn').textContent = t.modalVisitBtn;
+
+      const availClass = prop.available ? 'bg-emerald-500 text-white' : 'bg-rose-600 text-white';
+      document.getElementById('modal-badges').innerHTML = `
+        <span class="px-3 py-1 rounded-lg text-xs font-extrabold bg-amber-500 text-slate-950">${translateTransaction(prop.transactionType)}</span>
+        <span class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-900/90 text-white">${translateCategory(prop.category)}</span>
+        <span class="px-3 py-1 rounded-lg text-xs font-extrabold ${availClass}">${translateAvailability(prop)}</span>
+      `;
+
+      document.getElementById('property-modal').classList.remove('hidden');
+    }
+
+    function closePropertyModal() {
+      document.getElementById('property-modal').classList.add('hidden');
+    }
+
+    function bookSiteVisit() {
+      closePropertyModal();
+      showToast(I18N[currentLang].toastVisitBooked);
+    }
+
+    // 10. USER PROPERTY SUBMISSION
+    function updateCategoryHint() {
+      const cat = document.getElementById('inp-category').value;
+      const t = I18N[currentLang];
+      const hintEl = document.getElementById('category-hint-text');
+      if (cat === 'Residential') hintEl.textContent = t.hintRes;
+      else if (cat === 'Commercial') hintEl.textContent = t.hintCom;
+      else hintEl.textContent = t.hintAgr;
+    }
+
+    function autoFillDemoProperty() {
+      document.getElementById('inp-transaction').value = 'Sale';
+      document.getElementById('inp-category').value = 'Agricultural';
+      document.getElementById('inp-title-en').value = '3.2 Acres Organic Mango & Areca Orchard';
+      document.getElementById('inp-title-kn').value = '3.2 ಎಕರೆ ಸಾವಯವ ಮಾವು ಮತ್ತು ಅಡಿಕೆ ತೋಟ';
+      document.getElementById('inp-location').value = 'Srirangapatna, Mandya';
+      document.getElementById('inp-price').value = '14500000';
+      document.getElementById('inp-area').value = '3.2 Acres';
+      document.getElementById('inp-specs').value = '2 Borewells • Drip Irrigation • Solar Fence • Clear RTC';
+      document.getElementById('inp-desc').value = 'Well-developed organic orchard just 2 km off Bengaluru-Mysuru Expressway with motorable approach road and farm storage shed.';
+      document.getElementById('inp-owner-name').value = 'Chetan Narayan';
+      document.getElementById('inp-owner-phone').value = '+91 98802 55441';
+      updateCategoryHint();
+      showToast(I18N[currentLang].toastDemoFilled);
+    }
+
+    function handlePropertySubmit(e) {
+      e.preventDefault();
+      const cat = document.getElementById('inp-category').value;
+      const titleEn = document.getElementById('inp-title-en').value.trim();
+      const titleKn = document.getElementById('inp-title-kn').value.trim() || titleEn;
+      const location = document.getElementById('inp-location').value.trim();
+      const area = document.getElementById('inp-area').value.trim();
+      const specs = document.getElementById('inp-specs').value.trim();
+      const desc = document.getElementById('inp-desc').value.trim();
+      const customImg = document.getElementById('inp-image').value.trim();
+
+      const newProp = {
+        id: 'prop-' + Date.now(),
+        transactionType: document.getElementById('inp-transaction').value,
+        category: cat,
+        titleEn,
+        titleKn,
+        locationEn: location,
+        locationKn: location,
+        price: Number(document.getElementById('inp-price').value),
+        areaEn: area,
+        areaKn: area,
+        specsEn: specs,
+        specsKn: specs,
+        descriptionEn: desc,
+        descriptionKn: desc,
+        ownerName: document.getElementById('inp-owner-name').value.trim(),
+        ownerPhone: document.getElementById('inp-owner-phone').value.trim(),
+        image: customImg || DEFAULT_IMAGES[cat],
+        approvalStatus: 'pending',
+        available: true,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+
+      properties.unshift(newProp);
+      saveProperties();
+      e.target.reset();
+      showToast(I18N[currentLang].toastSubmitted);
+      switchView('listings');
+    }
+
+    // 11. ADMIN AUTHENTICATION & MODERATION CONTROLS
+    function quickFillAdmin() {
+      document.getElementById('admin-email').value = 'admin@mandyaproperties.com';
+      document.getElementById('admin-password').value = 'admin123';
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('admin-email').value.trim().toLowerCase();
+      const pass = document.getElementById('admin-password').value.trim();
+      if (email === 'admin@mandyaproperties.com' && pass === 'admin123') {
+        isAdminLoggedIn = true;
+        sessionStorage.setItem('acre_arch_admin', 'true');
+        document.getElementById('login-error').classList.add('hidden');
+        updateAdminAuthView();
+      } else {
+        document.getElementById('login-error').classList.remove('hidden');
+      }
+    }
+
+    function handleAdminLogout() {
+      isAdminLoggedIn = false;
+      sessionStorage.removeItem('acre_arch_admin');
+      updateAdminAuthView();
+    }
+
+    function updateAdminAuthView() {
+      const loginBox = document.getElementById('admin-login-box');
+      const dashBox = document.getElementById('admin-dashboard-box');
+      if (isAdminLoggedIn) {
+        loginBox.classList.add('hidden');
+        dashBox.classList.remove('hidden');
+        renderAdminDashboard();
+      } else {
+        loginBox.classList.remove('hidden');
+        dashBox.classList.add('hidden');
+      }
+    }
+
+    function setAdminTab(tab) {
+      currentAdminTab = tab;
+      ['pending', 'approved', 'rejected'].forEach(tName => {
+        const btn = document.getElementById('admin-tab-' + tName);
+        if (tName === tab) {
+          btn.className = 'admin-tab-btn px-4 py-2.5 rounded-t-xl text-sm font-bold border-b-2 border-amber-500 text-amber-700 bg-white cursor-pointer';
+        } else {
+          btn.className = 'admin-tab-btn px-4 py-2.5 rounded-t-xl text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 cursor-pointer';
+        }
+      });
+      renderAdminDashboard();
+    }
+
+    function renderAdminDashboard() {
+      const t = I18N[currentLang];
+      const pendingList = properties.filter(p => p.approvalStatus === 'pending');
+      const approvedList = properties.filter(p => p.approvalStatus === 'approved');
+      const rejectedList = properties.filter(p => p.approvalStatus === 'rejected');
+      const closedList = approvedList.filter(p => !p.available);
+
+      document.getElementById('kpi-pending').textContent = pendingList.length;
+      document.getElementById('kpi-approved').textContent = approvedList.length;
+      document.getElementById('kpi-closed').textContent = closedList.length;
+      document.getElementById('kpi-rejected').textContent = rejectedList.length;
+
+      document.getElementById('admin-tab-pending').innerHTML = `${t.tabPending} (<span>${pendingList.length}</span>)`;
+      document.getElementById('admin-tab-approved').innerHTML = `${t.tabApproved} (<span>${approvedList.length}</span>)`;
+      document.getElementById('admin-tab-rejected').innerHTML = `${t.tabRejected} (<span>${rejectedList.length}</span>)`;
+
+      const activeList = currentAdminTab === 'pending'
+        ? pendingList
+        : (currentAdminTab === 'approved' ? approvedList : rejectedList);
+
+      const container = document.getElementById('admin-list-container');
+      if (activeList.length === 0) {
+        container.innerHTML = `<div class="text-center py-10 text-sm text-slate-500">${t.adminEmptyTab}</div>`;
+        return;
+      }
+
+      container.innerHTML = activeList.map(prop => {
+        const title = getLocalizedField(prop, 'title');
+        const location = getLocalizedField(prop, 'location');
+        const area = getLocalizedField(prop, 'area');
+        const availLabel = translateAvailability(prop);
+
+        return `
+          <div class="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-slate-50/60 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex items-start gap-4">
+              <img src="${prop.image || DEFAULT_IMAGES[prop.category]}" alt="${title}" class="w-20 h-20 rounded-xl object-cover shrink-0 border border-slate-200" />
+              <div>
+                <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                  <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-900 text-white">${translateTransaction(prop.transactionType)}</span>
+                  <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800">${translateCategory(prop.category)}</span>
+                  <span class="px-2 py-0.5 rounded-md text-[11px] font-bold ${prop.available ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                    ${availLabel}
+                  </span>
+                </div>
+                <h4 class="font-extrabold text-slate-900 text-base">${title}</h4>
+                <p class="text-xs text-slate-500 mt-0.5">${location} • <strong>${area}</strong> • <strong class="text-amber-700">${formatINR(prop.price, prop.transactionType)}</strong></p>
+                <p class="text-xs text-slate-600 mt-1">👤 ${prop.ownerName} (${prop.ownerPhone}) • 📅 ${prop.createdAt}</p>
+              </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+              ${prop.approvalStatus !== 'approved' ? `
+                <button onclick="approveProperty('${prop.id}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm cursor-pointer">
+                  ✓ ${t.btnApprove}
+                </button>
+              ` : ''}
+
+              ${prop.approvalStatus === 'pending' ? `
+                <button onclick="rejectProperty('${prop.id}')" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold transition cursor-pointer">
+                  ✕ ${t.btnReject}
+                </button>
+              ` : ''}
+
+              ${prop.approvalStatus === 'approved' ? `
+                <button onclick="toggleAvailability('${prop.id}')" class="px-3.5 py-2 rounded-xl ${prop.available ? 'bg-slate-800 hover:bg-slate-900 text-white' : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-900'} text-xs font-bold transition cursor-pointer">
+                  ${prop.available ? t.btnMarkClosed(prop.transactionType) : t.btnMarkAvail}
+                </button>
+              ` : ''}
+
+              <button onclick="removeProperty('${prop.id}')" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition cursor-pointer">
+                🗑 ${t.btnRemove}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function approveProperty(id) {
+      const prop = properties.find(p => p.id === id);
+      if (!prop) return;
+      prop.approvalStatus = 'approved';
+      saveProperties();
+      renderAdminDashboard();
+      renderListings();
+      showToast(I18N[currentLang].toastApproved);
+    }
+
+    function rejectProperty(id) {
+      const prop = properties.find(p => p.id === id);
+      if (!prop) return;
+      prop.approvalStatus = 'rejected';
+      saveProperties();
+      renderAdminDashboard();
+      renderListings();
+      showToast(I18N[currentLang].toastRejected);
+    }
+
+    function toggleAvailability(id) {
+      const prop = properties.find(p => p.id === id);
+      if (!prop) return;
+      prop.available = !prop.available;
+      saveProperties();
+      renderAdminDashboard();
+      renderListings();
+      showToast(I18N[currentLang].toastStatusUpdated);
+    }
+
+    function removeProperty(id) {
+      properties = properties.filter(p => p.id !== id);
+      saveProperties();
+      renderAdminDashboard();
+      renderListings();
+      showToast(I18N[currentLang].toastRemoved);
+    }
+
+    function resetDemoDatabase() {
+      properties = [...INITIAL_PROPERTIES];
+      saveProperties();
+      renderAdminDashboard();
+      renderListings();
+      showToast('Sample bilingual database restored.');
+    }
+
+    function updateBadgesAndCounts() {
+      const pendingCount = properties.filter(p => p.approvalStatus === 'pending').length;
+      const badge = document.getElementById('pending-badge');
+      const mDot = document.getElementById('m-pending-dot');
+      if (pendingCount > 0) {
+        badge.textContent = pendingCount;
+        badge.classList.remove('hidden');
+        mDot.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+        mDot.classList.add('hidden');
+      }
+    }
+
+    // 12. TOAST FEEDBACK
+    let toastTimer = null;
+    function showToast(msg) {
+      const box = document.getElementById('toast-box');
+      document.getElementById('toast-message').textContent = msg;
+      box.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => box.classList.add('hidden'), 3600);
+    }
+
+    // INITIALIZE APP
+    loadProperties();
+    updateBadgesAndCounts();
+    setLanguage(currentLang);
+  </script>
+</body>
+</html>
